@@ -3,4 +3,4 @@
 
 CTS URL:
 
-https://fx-cts.azure.websites.net/index.html
+https://fx-cts.azurewebsites.net/index.html
