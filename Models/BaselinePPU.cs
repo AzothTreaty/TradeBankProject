@@ -1,24 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace TradeBank3.Models
 {
-    public class UserInput
+    public class BaselinePPU
     {
         [Key]
+        public Guid PaselinePPUID { get; set; }
+
         public Guid UserInputId { get; set; }
 
-        public string requestType { get; set; }
-        public Guid tradeId { get; set; }
-        public string sourceCurrency { get; set; }
-        public decimal PPU { get; set; }
-        public decimal purchaseAmount { get; set; }
-        public string purchaseCurrency { get; set; }
-        public DateTime timestampCreated { get; set; }
-        public string status { get; set; }
+        [ForeignKey("UserInputId")]
+        public virtual UserInput userInput { get; set; }
 
+        public string sourceCurrency { get; set; }
+
+        public string purchaseCurrency { get; set; }
+
+        public decimal PPU { get; set; }
     }
 }

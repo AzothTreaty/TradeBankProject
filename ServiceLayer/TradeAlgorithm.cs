@@ -40,11 +40,11 @@ namespace TradeBank3.ServiceLayer
 
             return data;
         }
-        public async void ShouldAcceptTrade(Models.UserInput userInput, BaselineData data)
+        public async Task<String> ShouldAcceptTrade(Models.UserInput userInput, BaselineData data)
         {
             //check first if baselines have value
             if (!data.hasValues)
-                return;
+                return "No Trade Baseline";
 
 
 
@@ -74,7 +74,7 @@ namespace TradeBank3.ServiceLayer
                 applicableConversion = data.usdToGbpBaseline;
             }
 
-            if((double)userInput.PPU > applicableConversion)
+            if((double)userInput.PPU >= (applicableConversion *0.8))
             {
                 try
                 {
@@ -85,21 +85,26 @@ namespace TradeBank3.ServiceLayer
                     var response = await client.SendAsync(request);
                     if (response.IsSuccessStatusCode)
                     {
+                        
                         response.EnsureSuccessStatusCode();
                         _logger.LogInformation("Trade success");
+                        return "Trade Success";
 
                     }
                     else
                     {
                         _logger.LogInformation("Trade not ours");
                         //throw new HttpRequestException();
+                        return "Trade already taken";
                     }
                 }
                 catch (Exception e)
                 {
                     _logger.LogInformation($"message {e.Message}");
+                    return "Trade API Exception";
                 }
             }
+            return "Insert ";
         }
     }
 }
