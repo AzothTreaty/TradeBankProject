@@ -26,6 +26,7 @@ namespace TradeBank3.DBContext
         //entities
         public DbSet<Baseline> Baseline { get; set; }
         public DbSet<UserInput> UserInput { get; set; }
+        public DbSet<BaselinePPU> BaselinePPUs { get; set; }
 
     }
 }

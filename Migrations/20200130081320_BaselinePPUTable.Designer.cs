@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TradeBank3.DBContext;
 
 namespace TradeBank3.Migrations
 {
     [DbContext(typeof(TradeBankContext))]
-    partial class TradeBankContextModelSnapshot : ModelSnapshot
+    [Migration("20200130081320_BaselinePPUTable")]
+    partial class BaselinePPUTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,31 +53,6 @@ namespace TradeBank3.Migrations
                     b.ToTable("Baseline");
                 });
 
-            modelBuilder.Entity("TradeBank3.Models.BaselinePPU", b =>
-                {
-                    b.Property<Guid>("PaselinePPUID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("PPU")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("UserInputId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("purchaseCurrency")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("sourceCurrency")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("PaselinePPUID");
-
-                    b.HasIndex("UserInputId");
-
-                    b.ToTable("BaselinePPUs");
-                });
-
             modelBuilder.Entity("TradeBank3.Models.UserInput", b =>
                 {
                     b.Property<Guid>("UserInputId")
@@ -97,27 +74,12 @@ namespace TradeBank3.Migrations
                     b.Property<string>("sourceCurrency")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("timestampCreated")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("tradeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("UserInputId");
 
                     b.ToTable("UserInput");
-                });
-
-            modelBuilder.Entity("TradeBank3.Models.BaselinePPU", b =>
-                {
-                    b.HasOne("TradeBank3.Models.UserInput", "userInput")
-                        .WithMany()
-                        .HasForeignKey("UserInputId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

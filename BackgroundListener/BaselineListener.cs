@@ -48,10 +48,15 @@ namespace TradeBank3.BackgroundListener
                         sourceCurrency = kafkaMessage.paymentCurrency,
                         PPU = kafkaMessage.pricePerUnit,
                         purchaseAmount = kafkaMessage.requestedAmount,
-                        purchaseCurrency = kafkaMessage.requestedCurrency
+                        purchaseCurrency = kafkaMessage.requestedCurrency,
+                        status = "Received",
+                        timestampCreated = DateTime.Now
                     };
 
-                    _tradeAlgo.ShouldAcceptTrade(userInput, baselineData);
+                    String status = await _tradeAlgo.ShouldAcceptTrade(userInput, baselineData);
+
+                    userInput.status = status;
+
                     await _userInput.AddUserInput(userInput);
                 }
                 else if (kafkaMessage.RecordId != null)
