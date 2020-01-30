@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using TradeBank3.BackgroundListener;
 using TradeBank3.DBContext;
 using TradeBank3.ServiceLayer;
@@ -89,7 +90,8 @@ namespace TradeBank3
 
             services.AddTransient<IUserInput, UserInput>();
             services.AddTransient<ITradeAlgorithm, TradeAgorithm>();
-            services.AddSingleton<BaselineData>(new BaselineData());
+
+            services.AddMemoryCache();
         }
     }
 }

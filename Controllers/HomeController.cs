@@ -36,7 +36,7 @@ namespace TradeBank3.Controllers
                 Models.Registration registrationDetails = new Models.Registration
                 { 
                     appName = "TradeBankEricTeam",
-                    UniqueCode = "1235789TBE"
+                    UniqueCode = "TradeBankEricTeam1235789"
 
                 };
                 var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/bank/register");

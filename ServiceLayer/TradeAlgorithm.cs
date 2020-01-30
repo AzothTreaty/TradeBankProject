@@ -7,19 +7,24 @@ namespace TradeBank3.ServiceLayer
 {
     public class TradeAgorithm : ITradeAlgorithm
     {
-        public void ComputeBaselinePPU(Models.Baseline baseline, BaselineData data)
+        public BaselineData ComputeBaselinePPU(Models.Baseline baseline)
         {
             double sgdM = (double)baseline.originModifier;
             double usdM = (double)baseline.usdModifier;
             double gbpM = (double)baseline.gdpModifier;
 
-            data.sgdToUsdBaseline = usdM / sgdM;
-            data.usdToSgdBaseline = sgdM / usdM;
-            data.sgdToGbpBaseline = gbpM / sgdM;
-            data.gbpToSgdBaseline = sgdM / gbpM;
-            data.usdToGbpBaseline = (gbpM / sgdM) * (sgdM / usdM);
-            data.gbpToUsdBaseline = (usdM / sgdM) * (sgdM / gbpM);
-            data.hasValues = true;
+            BaselineData data = new BaselineData
+            {
+                sgdToUsdBaseline = usdM / sgdM,
+                usdToSgdBaseline = sgdM / usdM,
+                sgdToGbpBaseline = gbpM / sgdM,
+                gbpToSgdBaseline = sgdM / gbpM,
+                usdToGbpBaseline = (gbpM / sgdM) * (sgdM / usdM),
+                gbpToUsdBaseline = (usdM / sgdM) * (sgdM / gbpM),
+                hasValues = true
+            };
+
+            return data;
         }
 
         public void ShouldAcceptTrade(Models.UserInput userInput, BaselineData data)
