@@ -12,7 +12,7 @@ namespace TradeBank3.Models
         public Guid UserInputId { get; set; }
 
         public string requestType { get; set; }
-        public Guid tradeId { get; set; }
+        public string tradeId { get; set; }
         public string sourceCurrency { get; set; }
         public decimal PPU { get; set; }
         public decimal purchaseAmount { get; set; }
