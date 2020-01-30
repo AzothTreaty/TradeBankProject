@@ -1,7 +1,9 @@
-﻿using System;
+﻿  using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -15,46 +17,40 @@ namespace TradeBank3.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private IUserInput _userInput;
+        private IHttpClientFactory _clientFactory;
 
-
-        public HomeController(IUserInput userInput,ILogger<HomeController> logger)
+        public HomeController(IUserInput userInput,ILogger<HomeController> logger, IHttpClientFactory clientFactory)
         {
             _logger = logger;
             _userInput = userInput;
+            _clientFactory = clientFactory;
 
         }
 
+
         public async Task<IActionResult> Index()
         {
+
             try
             {
-                Models.UserInput userInput2 = new Models.UserInput
-                {
-                    requestType = "Buy",
-                    tradeId = new Guid(),
-                    sourceCurrency = "SGD",
-                    PPU = 1.4m,
-                    purchaseAmount = 2000,
-                    purchaseCurrency = "USD"
+                Models.Registration registrationDetails = new Models.Registration
+                { 
+                    appName = "asdasd",
+                    UniqueCode = "asdasd"
+
                 };
-                var test = JsonConvert.SerializeObject(userInput2);
-
-                //var record = JsonConvert.SerializeObject<Object>(message.Value);
-                dynamic record = JsonConvert.DeserializeObject(test);
-
-                if (record.tradeId != null)
+                var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/bank/register");
+                var client = _clientFactory.CreateClient("TradeBankProject");
+                var json = JsonConvert.SerializeObject(registrationDetails);
+                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await client.SendAsync(request);
+                if (response.IsSuccessStatusCode)
                 {
-                    Models.UserInput userInput3 = new Models.UserInput
-                    {
-                        requestType = record.requestType,
-                        tradeId = record.tradeId,
-                        sourceCurrency = record.sourceCurrency,
-                        PPU = record.PPU,
-                        purchaseAmount = record.purchaseAmount,
-                        purchaseCurrency = record.purchaseCurrency
-                    };
-
-                    await _userInput.AddUserInput(userInput3);
+                    response.EnsureSuccessStatusCode();
+                }
+                else
+                {
+                    throw new HttpRequestException();
                 }
 
             }

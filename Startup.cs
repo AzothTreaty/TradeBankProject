@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using TradeBank3.BackgroundListener;
 using TradeBank3.DBContext;
 using TradeBank3.ServiceLayer;
@@ -30,6 +31,11 @@ namespace TradeBank3
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddHttpClient("TradeBankProject", client => {
+                client.BaseAddress = new Uri("https://fx-cts.azurewebsites.net");
+            });
+
             services.AddControllersWithViews();
 
             services.AddDbContext<TradeBankContext>(options =>options.UseSqlServer(Configuration.GetConnectionString("TradeBankDB")));
@@ -83,6 +89,9 @@ namespace TradeBank3
             services.AddHostedService<BaselineListener>();
 
             services.AddTransient<IUserInput, UserInput>();
+            services.AddTransient<ITradeAlgorithm, TradeAgorithm>();
+
+            services.AddMemoryCache();
         }
     }
 }
