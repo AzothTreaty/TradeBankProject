@@ -1,7 +1,9 @@
-﻿using System;
+﻿  using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -15,17 +17,49 @@ namespace TradeBank3.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private IUserInput _userInput;
+        private IHttpClientFactory _clientFactory;
 
-
-        public HomeController(IUserInput userInput,ILogger<HomeController> logger)
+        public HomeController(IUserInput userInput,ILogger<HomeController> logger, IHttpClientFactory clientFactory)
         {
             _logger = logger;
             _userInput = userInput;
+            _clientFactory = clientFactory;
 
         }
 
+
         public async Task<IActionResult> Index()
         {
+
+            try
+            {
+                Models.Registration registrationDetails = new Models.Registration
+                { 
+                    appName = "TradeBankEricTeam",
+                    UniqueCode = "1235789TBE"
+
+                };
+                var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/bank/register");
+                var client = _clientFactory.CreateClient("TradeBankProject");
+                var json = JsonConvert.SerializeObject(registrationDetails);
+                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await client.SendAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    response.EnsureSuccessStatusCode();
+                }
+                else
+                {
+                    throw new HttpRequestException();
+                }
+
+            }
+            catch (Exception e)
+            {
+
+            }
+
+
             try
             {
                 Models.UserInput userInput2 = new Models.UserInput
@@ -54,7 +88,7 @@ namespace TradeBank3.Controllers
                         purchaseCurrency = record.purchaseCurrency
                     };
 
-                    await _userInput.AddUserInput(userInput3);
+                    await _userInput.AddUserInput(userInput3);  
                 }
 
             }
