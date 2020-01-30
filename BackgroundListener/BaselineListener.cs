@@ -36,7 +36,7 @@ namespace TradeBank3.BackgroundListener
             {
                 dynamic kafkaMessage = JsonConvert.DeserializeObject(message.Value);
 
-                _logger.LogInformation($"message {message.Value}");
+                //_logger.LogInformation($"message {message.Value}");
 
                 if (kafkaMessage.tradeId != null)
                 {
@@ -57,12 +57,12 @@ namespace TradeBank3.BackgroundListener
                 else if (kafkaMessage.RecordId != null)
                 {
                     _logger.LogInformation("TradeBaseline");
-                    _logger.LogInformation("Hello1 " + baselineData.sgdToUsdBaseline);
+                    /*_logger.LogInformation("Hello1 " + baselineData.sgdToUsdBaseline);
                     _logger.LogInformation("Hello2 " + baselineData.usdToSgdBaseline);
                     _logger.LogInformation("Hello3 " + baselineData.sgdToGbpBaseline);
                     _logger.LogInformation("Hello4 " + baselineData.gbpToSgdBaseline);
                     _logger.LogInformation("Hello5 " + baselineData.usdToGbpBaseline);
-                    _logger.LogInformation("Hello6 " + baselineData.gbpToUsdBaseline);
+                    _logger.LogInformation("Hello6 " + baselineData.gbpToUsdBaseline);*/
 
                     Models.Baseline baseline = new Models.Baseline
                     {
@@ -76,12 +76,12 @@ namespace TradeBank3.BackgroundListener
                     };
 
                     baselineData = _tradeAlgo.ComputeBaselinePPU(baseline);
-                    _logger.LogInformation("Hello11 " + baselineData.sgdToUsdBaseline);
+                    /*_logger.LogInformation("Hello11 " + baselineData.sgdToUsdBaseline);
                     _logger.LogInformation("Hello12 " + baselineData.usdToSgdBaseline);
                     _logger.LogInformation("Hello13 " + baselineData.sgdToGbpBaseline);
                     _logger.LogInformation("Hello14 " + baselineData.gbpToSgdBaseline);
                     _logger.LogInformation("Hello15 " + baselineData.usdToGbpBaseline);
-                    _logger.LogInformation("Hello16 " + baselineData.gbpToUsdBaseline);
+                    _logger.LogInformation("Hello16 " + baselineData.gbpToUsdBaseline);*/
                 }
                 else
                 {

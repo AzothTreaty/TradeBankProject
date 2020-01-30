@@ -13,7 +13,14 @@ namespace TradeBank3.ServiceLayer
     public class TradeAgorithm : ITradeAlgorithm
     {
         private IHttpClientFactory _clientFactory;
-        private readonly ILogger<BaselineListener> _logger;
+        private readonly ILogger<TradeAgorithm> _logger;
+
+        public TradeAgorithm (ILogger<TradeAgorithm> logger, IHttpClientFactory clientFactory)
+        {
+            _clientFactory = clientFactory;
+            _logger = logger;
+        }
+
         public BaselineData ComputeBaselinePPU(Models.Baseline baseline)
         {
             double sgdM = (double)baseline.originModifier;
@@ -84,14 +91,13 @@ namespace TradeBank3.ServiceLayer
                     }
                     else
                     {
-                        
                         _logger.LogInformation("Trade not ours");
-                        throw new HttpRequestException();
+                        //throw new HttpRequestException();
                     }
                 }
                 catch (Exception e)
                 {
-
+                    _logger.LogInformation($"message {e.Message}");
                 }
             }
         }

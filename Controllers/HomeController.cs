@@ -35,8 +35,8 @@ namespace TradeBank3.Controllers
             {
                 Models.Registration registrationDetails = new Models.Registration
                 { 
-                    appName = "TradeBankEricTeam",
-                    UniqueCode = "TradeBankEricTeam1235789"
+                    appName = "asdasd",
+                    UniqueCode = "asdasd"
 
                 };
                 var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/bank/register");
@@ -51,44 +51,6 @@ namespace TradeBank3.Controllers
                 else
                 {
                     throw new HttpRequestException();
-                }
-
-            }
-            catch (Exception e)
-            {
-
-            }
-
-
-            try
-            {
-                Models.UserInput userInput2 = new Models.UserInput
-                {
-                    requestType = "Buy",
-                    tradeId = new Guid(),
-                    sourceCurrency = "SGD",
-                    PPU = 1.4m,
-                    purchaseAmount = 2000,
-                    purchaseCurrency = "USD"
-                };
-                var test = JsonConvert.SerializeObject(userInput2);
-
-                //var record = JsonConvert.SerializeObject<Object>(message.Value);
-                dynamic record = JsonConvert.DeserializeObject(test);
-
-                if (record.tradeId != null)
-                {
-                    Models.UserInput userInput3 = new Models.UserInput
-                    {
-                        requestType = record.requestType,
-                        tradeId = record.tradeId,
-                        sourceCurrency = record.sourceCurrency,
-                        PPU = record.PPU,
-                        purchaseAmount = record.purchaseAmount,
-                        purchaseCurrency = record.purchaseCurrency
-                    };
-
-                    await _userInput.AddUserInput(userInput3);  
                 }
 
             }
