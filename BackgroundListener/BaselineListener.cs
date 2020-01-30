@@ -17,38 +17,36 @@ namespace TradeBank3.BackgroundListener
     {
         private readonly ILogger<BaselineListener> _logger;
         private IUserInput _userInput;
-        public BaselineListener(IUserInput userInput, ILogger<BaselineListener> logger, IOptions<KafkaOptions> options) : base(logger, options.Value, new List<string> { "TradeBaseline", "TradeOffer"})
+        private ITradeAlgorithm _tradeAlgo;
+        public BaselineListener(ITradeAlgorithm tradeAlgo, IUserInput userInput, ILogger<BaselineListener> logger, IOptions<KafkaOptions> options) : base(logger, options.Value, new List<string> { "TradeBaseline", "TradeOffer"})
         {
             _logger = logger;
             _userInput = userInput;
-           
+            _tradeAlgo = tradeAlgo;
         }
 
         public override async Task ProcessingLogic(IConsumer<string, string> consumer, ConsumeResult<string, string> message)
         {
             try
             {
-                Models.UserInput userInput2 = new Models.UserInput
-                {
-                    requestType = "Buy",
-                    tradeId = new Guid(),
-                    sourceCurrency = "SGD",
-                    PPU = 1.4m,
-                    purchaseAmount = 1000,
-                    purchaseCurrency = "USD"
-                };
-                var test = JsonConvert.SerializeObject(userInput2);
-
-                //var record = JsonConvert.DeserializeObject<Object>(message.Value);
-                Models.UserInput record = JsonConvert.DeserializeObject<Models.UserInput>(test);
-
-                //code to caculate ppu
-                await _userInput.AddUserInput((Models.UserInput)record);
+                dynamic kafkaMessage = JsonConvert.DeserializeObject(message.Value);
 
                 _logger.LogInformation($"message {message.Value}");
+                if (kafkaMessage.tradeId != null)
+                {
+                    _tradeAlgo.ShouldAcceptTrade((Models.UserInput)kafkaMessage);
+                    await _userInput.AddUserInput((Models.UserInput)kafkaMessage);
+                }
+                else if (kafkaMessage.recordId != null)
+                {
+                    _tradeAlgo.ComputeBaselinePPU((Models.Baseline)kafkaMessage);
+                }
+                else
+                {
+                    _logger.LogInformation("ERROR, wrong format");
+                    _logger.LogInformation($"message {message.Value}");
+                }
 
-               
-                
                 consumer.Commit(message);
             }
             catch (Exception e)

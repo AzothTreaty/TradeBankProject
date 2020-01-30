@@ -83,6 +83,7 @@ namespace TradeBank3
             services.AddHostedService<BaselineListener>();
 
             services.AddTransient<IUserInput, UserInput>();
+            services.AddTransient<ITradeAlgorithm, TradeAgorithm>();
         }
     }
 }
