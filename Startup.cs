@@ -30,6 +30,11 @@ namespace TradeBank3
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddHttpClient("TradeBankProject", client => {
+                client.BaseAddress = new Uri("https://fx-cts.azurewebsites.net");
+            });
+
             services.AddControllersWithViews();
 
             services.AddDbContext<TradeBankContext>(options =>options.UseSqlServer(Configuration.GetConnectionString("TradeBankDB")));
