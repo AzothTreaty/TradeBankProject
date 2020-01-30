@@ -84,6 +84,7 @@ namespace TradeBank3
 
             services.AddTransient<IUserInput, UserInput>();
             services.AddTransient<ITradeAlgorithm, TradeAgorithm>();
+            services.AddSingleton<BaselineData>(new BaselineData());
         }
     }
 }

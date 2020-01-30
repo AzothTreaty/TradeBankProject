@@ -18,11 +18,13 @@ namespace TradeBank3.BackgroundListener
         private readonly ILogger<BaselineListener> _logger;
         private IUserInput _userInput;
         private ITradeAlgorithm _tradeAlgo;
-        public BaselineListener(ITradeAlgorithm tradeAlgo, IUserInput userInput, ILogger<BaselineListener> logger, IOptions<KafkaOptions> options) : base(logger, options.Value, new List<string> { "TradeBaseline", "TradeOffer"})
+        private BaselineData _baselineData;
+        public BaselineListener(BaselineData baselineData, ITradeAlgorithm tradeAlgo, IUserInput userInput, ILogger<BaselineListener> logger, IOptions<KafkaOptions> options) : base(logger, options.Value, new List<string> { "TradeBaseline", "TradeOffer"})
         {
             _logger = logger;
             _userInput = userInput;
             _tradeAlgo = tradeAlgo;
+            _baselineData = baselineData;
         }
 
         public override async Task ProcessingLogic(IConsumer<string, string> consumer, ConsumeResult<string, string> message)
@@ -34,25 +36,26 @@ namespace TradeBank3.BackgroundListener
                 if (kafkaMessage.RequestType != null)
                 {
                     _logger.LogInformation("TradeOffer");
-                    _tradeAlgo.ShouldAcceptTrade((Models.UserInput)kafkaMessage);
+                    _tradeAlgo.ShouldAcceptTrade((Models.UserInput)kafkaMessage, _baselineData);
                     await _userInput.AddUserInput((Models.UserInput)kafkaMessage);
                 }
                 else if (kafkaMessage.RecordId != null)
                 {
                     _logger.LogInformation("TradeBaseline");
-                    _logger.LogInformation("Hello " + BaselineData.sgdToUsdBaseline);
-                    _logger.LogInformation("Hello " + BaselineData.usdToSgdBaseline);
-                    _logger.LogInformation("Hello " + BaselineData.sgdToGbpBaseline);
-                    _logger.LogInformation("Hello " + BaselineData.gbpToSgdBaseline);
-                    _logger.LogInformation("Hello " + BaselineData.usdToGbpBaseline);
-                    _logger.LogInformation("Hello " + BaselineData.gbpToUsdBaseline);
-                    _tradeAlgo.ComputeBaselinePPU((Models.Baseline)kafkaMessage);
-                    _logger.LogInformation("Hello1 " + BaselineData.sgdToUsdBaseline);
-                    _logger.LogInformation("Hello1 " + BaselineData.usdToSgdBaseline);
-                    _logger.LogInformation("Hello1 " + BaselineData.sgdToGbpBaseline);
-                    _logger.LogInformation("Hello1 " + BaselineData.gbpToSgdBaseline);
-                    _logger.LogInformation("Hello1 " + BaselineData.usdToGbpBaseline);
-                    _logger.LogInformation("Hello1 " + BaselineData.gbpToUsdBaseline);
+                    _logger.LogInformation("TradeBaseline1");
+                    _logger.LogInformation("Hello " + _baselineData.sgdToUsdBaseline);
+                    _logger.LogInformation("Hello " + _baselineData.usdToSgdBaseline);
+                    _logger.LogInformation("Hello " + _baselineData.sgdToGbpBaseline);
+                    _logger.LogInformation("Hello " + _baselineData.gbpToSgdBaseline);
+                    _logger.LogInformation("Hello " + _baselineData.usdToGbpBaseline);
+                    _logger.LogInformation("Hello " + _baselineData.gbpToUsdBaseline);
+                    _tradeAlgo.ComputeBaselinePPU((Models.Baseline)kafkaMessage, _baselineData);
+                    _logger.LogInformation("Hello1 " + _baselineData.sgdToUsdBaseline);
+                    _logger.LogInformation("Hello1 " + _baselineData.usdToSgdBaseline);
+                    _logger.LogInformation("Hello1 " + _baselineData.sgdToGbpBaseline);
+                    _logger.LogInformation("Hello1 " + _baselineData.gbpToSgdBaseline);
+                    _logger.LogInformation("Hello1 " + _baselineData.usdToGbpBaseline);
+                    _logger.LogInformation("Hello1 " + _baselineData.gbpToUsdBaseline);
                 }
                 else
                 {
