@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using TradeBank3.BackgroundListener;
@@ -23,6 +24,11 @@ namespace TradeBank3.ServiceLayer
             return true;
         }
 
-   
+        public List<Models.UserInput> GetUserInput()
+        {
+            var results = _context.UserInput.Where(c=>c.tradeId != null);
+
+            return results.ToList();
+        }
     }
 }

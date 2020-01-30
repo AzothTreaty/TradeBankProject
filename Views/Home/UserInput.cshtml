@@ -1,0 +1,83 @@
+﻿@model IEnumerable<TradeBank3.Models.UserInput>
+
+@{
+    ViewData["Title"] = "UserInput";
+}
+
+<h1>UserInput</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.UserInputId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.requestType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.tradeId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.sourceCurrency)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PPU)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.purchaseAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.purchaseCurrency)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.timestampCreated)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.status)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserInputId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.requestType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.tradeId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.sourceCurrency)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PPU)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.purchaseAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.purchaseCurrency)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.timestampCreated)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.status)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

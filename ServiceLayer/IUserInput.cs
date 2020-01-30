@@ -11,6 +11,7 @@ namespace TradeBank3.ServiceLayer
     public interface IUserInput
     {
         Task<Boolean> AddUserInput(Models.UserInput userInput);
+        List<Models.UserInput> GetUserInput();
     }
 
 

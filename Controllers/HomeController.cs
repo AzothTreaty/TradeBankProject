@@ -68,6 +68,13 @@ namespace TradeBank3.Controllers
             return View();
         }
 
+
+        public IActionResult UserInput()
+        {
+            var results= _userInput.GetUserInput();
+            return View(results);
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
