@@ -1,12 +1,19 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using TradeBank3.BackgroundListener;
 
 namespace TradeBank3.ServiceLayer
 {
     public class TradeAgorithm : ITradeAlgorithm
     {
+        private IHttpClientFactory _clientFactory;
+        private readonly ILogger<BaselineListener> _logger;
         public BaselineData ComputeBaselinePPU(Models.Baseline baseline)
         {
             double sgdM = (double)baseline.originModifier;
@@ -26,8 +33,7 @@ namespace TradeBank3.ServiceLayer
 
             return data;
         }
-
-        public void ShouldAcceptTrade(Models.UserInput userInput, BaselineData data)
+        public async void ShouldAcceptTrade(Models.UserInput userInput, BaselineData data)
         {
             //check first if baselines have value
             if (!data.hasValues)
@@ -63,7 +69,30 @@ namespace TradeBank3.ServiceLayer
 
             if((double)userInput.PPU > applicableConversion)
             {
-                //buy it
+                try
+                {
+                    var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/trade/"+userInput.tradeId);
+                    var client = _clientFactory.CreateClient("TradeBankProject");
+                    //var json = JsonConvert.SerializeObject(userInput);
+                    //request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                    var response = await client.SendAsync(request);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        response.EnsureSuccessStatusCode();
+                        _logger.LogInformation("Trade success");
+
+                    }
+                    else
+                    {
+                        
+                        _logger.LogInformation("Trade not ours");
+                        throw new HttpRequestException();
+                    }
+                }
+                catch (Exception e)
+                {
+
+                }
             }
         }
     }
