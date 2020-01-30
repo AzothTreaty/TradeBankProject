@@ -10271,19 +10271,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\GioRamos\\.nuget\\packages\\": {}
+    "C:\\Users\\Huang Xuexun\\.nuget\\packages\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\GioRamos\\source\\repos\\TradeBank3\\TradeBank3.csproj",
+      "projectUniqueName": "C:\\Users\\Huang Xuexun\\Documents\\Utrix\\TradeBank\\TradeBank3.csproj",
       "projectName": "TradeBank3",
-      "projectPath": "C:\\Users\\GioRamos\\source\\repos\\TradeBank3\\TradeBank3.csproj",
-      "packagesPath": "C:\\Users\\GioRamos\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\GioRamos\\source\\repos\\TradeBank3\\obj\\",
+      "projectPath": "C:\\Users\\Huang Xuexun\\Documents\\Utrix\\TradeBank\\TradeBank3.csproj",
+      "packagesPath": "C:\\Users\\Huang Xuexun\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Huang Xuexun\\Documents\\Utrix\\TradeBank\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+      ],
       "configFilePaths": [
-        "C:\\Users\\GioRamos\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Huang Xuexun\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -10291,7 +10295,8 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "https://api.nuget.org/v3/index.json": {}
+        "https://api.nuget.org/v3/index.json": {},
+        "https://pkgs.dev.azure.com/runguangQAC/_packaging/QAC.Core.NugetServer/nuget/v3/index.json": {}
       },
       "frameworks": {
         "netcoreapp3.1": {
