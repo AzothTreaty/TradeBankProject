@@ -31,14 +31,15 @@ namespace TradeBank3.BackgroundListener
             {
                 dynamic kafkaMessage = JsonConvert.DeserializeObject(message.Value);
 
-                _logger.LogInformation($"message {message.Value}");
-                if (kafkaMessage.tradeId != null)
+                if (kafkaMessage.RequestType != null)
                 {
+                    _logger.LogInformation("TradeOffer");
                     _tradeAlgo.ShouldAcceptTrade((Models.UserInput)kafkaMessage);
                     await _userInput.AddUserInput((Models.UserInput)kafkaMessage);
                 }
-                else if (kafkaMessage.recordId != null)
+                else if (kafkaMessage.RecordId != null)
                 {
+                    _logger.LogInformation("TradeBaseline");
                     _tradeAlgo.ComputeBaselinePPU((Models.Baseline)kafkaMessage);
                 }
                 else
