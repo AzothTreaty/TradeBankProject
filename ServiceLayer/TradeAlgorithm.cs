@@ -20,6 +20,7 @@ namespace TradeBank3.ServiceLayer
             BaselineData.usdToGbpBaseline = (gbpM / sgdM) * (sgdM / usdM);
             BaselineData.gbpToUsdBaseline = (usdM / sgdM) * (sgdM / gbpM);
             BaselineData.hasValues = true;
+            BaselineData.StoreMe();
         }
 
         public void ShouldAcceptTrade(Models.UserInput userInput)

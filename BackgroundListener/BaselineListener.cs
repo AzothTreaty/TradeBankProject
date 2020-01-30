@@ -40,7 +40,19 @@ namespace TradeBank3.BackgroundListener
                 else if (kafkaMessage.RecordId != null)
                 {
                     _logger.LogInformation("TradeBaseline");
+                    _logger.LogInformation("Hello " + BaselineData.sgdToUsdBaseline);
+                    _logger.LogInformation("Hello " + BaselineData.usdToSgdBaseline);
+                    _logger.LogInformation("Hello " + BaselineData.sgdToGbpBaseline);
+                    _logger.LogInformation("Hello " + BaselineData.gbpToSgdBaseline);
+                    _logger.LogInformation("Hello " + BaselineData.usdToGbpBaseline);
+                    _logger.LogInformation("Hello " + BaselineData.gbpToUsdBaseline);
                     _tradeAlgo.ComputeBaselinePPU((Models.Baseline)kafkaMessage);
+                    _logger.LogInformation("Hello1 " + BaselineData.sgdToUsdBaseline);
+                    _logger.LogInformation("Hello1 " + BaselineData.usdToSgdBaseline);
+                    _logger.LogInformation("Hello1 " + BaselineData.sgdToGbpBaseline);
+                    _logger.LogInformation("Hello1 " + BaselineData.gbpToSgdBaseline);
+                    _logger.LogInformation("Hello1 " + BaselineData.usdToGbpBaseline);
+                    _logger.LogInformation("Hello1 " + BaselineData.gbpToUsdBaseline);
                 }
                 else
                 {
