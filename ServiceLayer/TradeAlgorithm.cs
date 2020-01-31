@@ -26,10 +26,27 @@ namespace TradeBank3.ServiceLayer
             cache.Remove(cacheKey);
         }
 
-        /*public Models.Baseline getBaseline()
+        public async Task<Models.Baseline> GetBaseline()
         {
+            var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/trade/baseline");
+            var client = _clientFactory.CreateClient("TradeBankProject");
+            var response = await client.SendAsync(request);
 
-        }*/
+            dynamic message = response.Content;
+
+            Models.Baseline baseline = new Models.Baseline
+            {
+                recordId = message.recordId,
+                originType = message.originType,
+                originModifier = message.originModifier,
+                usdModifier = message.usdModifier,
+                gdpModifier = message.gbpModifier,
+                createdTs = message.createdTs,
+                version = message.version
+            };
+
+            return baseline;
+        }
 
         public void ComputeBaselinePPU(Models.Baseline baseline)
         {
@@ -63,8 +80,9 @@ namespace TradeBank3.ServiceLayer
 
             if (data == null)
             {
-               //_logger.LogInformation("==========================================================================Baseline doesnt exist yet");
-                return "No Trade Baseline";
+                //_logger.LogInformation("==========================================================================Baseline doesnt exist yet");
+                ComputeBaselinePPU(await GetBaseline());
+                //return "No Trade Baseline";
             }
 
             /*_logger.LogInformation("Hello1 " + data.sgdToUsdBaseline);
