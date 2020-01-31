@@ -16,8 +16,13 @@ namespace TradeBank3.ServiceLayer
         private IHttpClientFactory _clientFactory;
         private readonly ILogger<TradeAgorithm> _logger;
         private IMemoryCache _cache;
+
+        private int skipCounter, failCounter;
+
         private const string cacheKey = "BaselineData";
         private const decimal baselineAmount = 1000m;
+        private const int maxFails = 100;
+        private const int skipAmount = 200;
 
         public TradeAgorithm (ILogger<TradeAgorithm> logger, IHttpClientFactory clientFactory, IMemoryCache cache)
         {
@@ -25,6 +30,8 @@ namespace TradeBank3.ServiceLayer
             _logger = logger;
             _cache = cache;
             cache.Remove(cacheKey);
+            skipCounter = 0;
+            failCounter = 0;
         }
 
         public async Task<Models.Baseline> GetBaseline()
@@ -78,6 +85,7 @@ namespace TradeBank3.ServiceLayer
         }
         public async Task<String> ShouldAcceptTrade(Models.UserInput userInput, BaselineData data)
         {
+            if (--skipCounter > 0) return "Skipped";
             //BaselineData data = _cache.Get<BaselineData>(cacheKey);
 
             if (!data.hasValues)//(data == null)
@@ -148,6 +156,7 @@ namespace TradeBank3.ServiceLayer
                     }
                     else
                     {
+                        if (++failCounter > maxFails) skipCounter = skipAmount;
                         //_logger.LogInformation("==========================================================================Trade not ours");
                         //throw new HttpRequestException();
                         return "Trade already taken";

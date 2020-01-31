@@ -54,7 +54,7 @@ namespace TradeBank3.BackgroundListener
                 String status = await _tradeAlgo.ShouldAcceptTrade(userInput, baselineData);
                 userInput.status = status;
 
-                var gg = _userInput.AddUserInput(userInput);
+                var gg = await _userInput.AddUserInput(userInput);
             }
             else if (kafkaMessage.RecordId != null)
             {
