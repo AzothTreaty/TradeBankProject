@@ -35,7 +35,7 @@ namespace TradeBank3.Controllers
             {
                 Models.Registration registrationDetails = new Models.Registration
                 { 
-                    appName = "TradeBank3GioVersion",
+                    appName = "TradeBank3",
                     UniqueCode = "pspspspspppsp"
 
                 };

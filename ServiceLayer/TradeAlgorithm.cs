@@ -17,6 +17,7 @@ namespace TradeBank3.ServiceLayer
         private readonly ILogger<TradeAgorithm> _logger;
         private IMemoryCache _cache;
         private const string cacheKey = "BaselineData";
+        private const decimal baselineAmount = 1000m;
 
         public TradeAgorithm (ILogger<TradeAgorithm> logger, IHttpClientFactory clientFactory, IMemoryCache cache)
         {
@@ -48,7 +49,7 @@ namespace TradeBank3.ServiceLayer
             return baseline;
         }
 
-        public void ComputeBaselinePPU(Models.Baseline baseline)
+        public BaselineData ComputeBaselinePPU(Models.Baseline baseline)
         {
             double sgdM = (double)baseline.originModifier;
             double usdM = (double)baseline.usdModifier;
@@ -71,19 +72,23 @@ namespace TradeBank3.ServiceLayer
             _logger.LogInformation("Hello14 " + data.gbpToSgdBaseline);
             _logger.LogInformation("Hello15 " + data.usdToGbpBaseline);
             _logger.LogInformation("Hello16 " + data.gbpToUsdBaseline);*/
-            _cache.Set(cacheKey, data);
-        }
-        public async Task<String> ShouldAcceptTrade(Models.UserInput userInput)
-        {
-            //check first if baselines have value
-            BaselineData data = _cache.Get<BaselineData>(cacheKey);
 
-            if (data == null)
+            //_cache.Set(cacheKey, data);
+            return data;
+        }
+        public async Task<String> ShouldAcceptTrade(Models.UserInput userInput, BaselineData data)
+        {
+            //BaselineData data = _cache.Get<BaselineData>(cacheKey);
+
+            if (!data.hasValues)//(data == null)
             {
                 //_logger.LogInformation("==========================================================================Baseline doesnt exist yet");
-                ComputeBaselinePPU(await GetBaseline());
+                data = ComputeBaselinePPU(await GetBaseline());
                 //return "No Trade Baseline";
             }
+
+            //if (userInput.purchaseAmount <= baselineAmount)
+            //    return "Too small purchase amounts";
 
             /*_logger.LogInformation("Hello1 " + data.sgdToUsdBaseline);
             _logger.LogInformation("Hello2 " + data.usdToSgdBaseline);
@@ -124,7 +129,7 @@ namespace TradeBank3.ServiceLayer
             else
                 _logger.LogInformation("==========================================================================Error Invalid Conversion");
 
-            if (((double)userInput.PPU > applicableConversion) && data.hasValues)
+            if (((double)userInput.PPU > applicableConversion))
             {
                 try
                 {
@@ -150,7 +155,7 @@ namespace TradeBank3.ServiceLayer
                 }
                 catch (Exception e)
                 {
-                    //_logger.LogInformation($"message {e.Message}");
+                    _logger.LogInformation($"message {e.Message}");
                     return "Trade API Exception";
                 }
             }

@@ -7,7 +7,7 @@ namespace TradeBank3.ServiceLayer
 {
     public interface ITradeAlgorithm
     {
-        public void ComputeBaselinePPU(Models.Baseline baseline);
-        public Task<String> ShouldAcceptTrade(Models.UserInput userInput);
+        public BaselineData ComputeBaselinePPU(Models.Baseline baseline);
+        public Task<String> ShouldAcceptTrade(Models.UserInput userInput, BaselineData data);
     }
 }

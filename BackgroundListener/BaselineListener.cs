@@ -21,86 +21,77 @@ namespace TradeBank3.BackgroundListener
         private ITradeAlgorithm _tradeAlgo;
         private IMemoryCache _cache;
         private BaselineData baselineData;
-        public BaselineListener(IMemoryCache cache, ITradeAlgorithm tradeAlgo, IUserInput userInput, ILogger<BaselineListener> logger, IOptions<KafkaOptions> options) : base(logger, options.Value, new List<string> { "TradeBaseline", "TradeOffer"})
+        public BaselineListener(ITradeAlgorithm tradeAlgo, IUserInput userInput, ILogger<BaselineListener> logger, IOptions<KafkaOptions> options) : base(logger, options.Value, new List<string> { "TradeBaseline", "TradeOffer"})
         {
             _logger = logger;
             _userInput = userInput;
             _tradeAlgo = tradeAlgo;
-            _cache = cache;
+            //_cache = cache;
             baselineData = new BaselineData();
         }
 
         public override async Task ProcessingLogic(IConsumer<string, string> consumer, ConsumeResult<string, string> message)
-        {
-            try
+    {
+            dynamic kafkaMessage = JsonConvert.DeserializeObject(message.Value);
+
+            //_logger.LogInformation($"message {message.Value}");
+
+            if (kafkaMessage.tradeId != null)
             {
-                dynamic kafkaMessage = JsonConvert.DeserializeObject(message.Value);
+                //_logger.LogInformation("==========================================================================TradeOffer");
 
-                //_logger.LogInformation($"message {message.Value}");
-
-                if (kafkaMessage.tradeId != null)
+                Models.UserInput userInput = new Models.UserInput
                 {
-                    //_logger.LogInformation("==========================================================================TradeOffer");
+                    tradeId = kafkaMessage.tradeId,
+                    sourceCurrency = kafkaMessage.paymentCurrency,
+                    PPU = kafkaMessage.pricePerUnit,
+                    purchaseAmount = kafkaMessage.requestedAmount,
+                    purchaseCurrency = kafkaMessage.requestedCurrency,
+                    status = "Received",
+                    timestampCreated = DateTime.Now
+                };
 
-                    Models.UserInput userInput = new Models.UserInput
-                    {
-                        tradeId = kafkaMessage.tradeId,
-                        sourceCurrency = kafkaMessage.paymentCurrency,
-                        PPU = kafkaMessage.pricePerUnit,
-                        purchaseAmount = kafkaMessage.requestedAmount,
-                        purchaseCurrency = kafkaMessage.requestedCurrency,
-                        status = "Received",
-                        timestampCreated = DateTime.Now
-                    };
+                String status = await _tradeAlgo.ShouldAcceptTrade(userInput, baselineData);
+                userInput.status = status;
 
-                    String status = await _tradeAlgo.ShouldAcceptTrade(userInput);
-
-                    userInput.status = status;
-
-                    await _userInput.AddUserInput(userInput);
-                }
-                else if (kafkaMessage.RecordId != null)
-                {
-                    //_logger.LogInformation("==========================================================================TradeBaseline");
-                    /*_logger.LogInformation("Hello1 " + baselineData.sgdToUsdBaseline);
-                    _logger.LogInformation("Hello2 " + baselineData.usdToSgdBaseline);
-                    _logger.LogInformation("Hello3 " + baselineData.sgdToGbpBaseline);
-                    _logger.LogInformation("Hello4 " + baselineData.gbpToSgdBaseline);
-                    _logger.LogInformation("Hello5 " + baselineData.usdToGbpBaseline);
-                    _logger.LogInformation("Hello6 " + baselineData.gbpToUsdBaseline);*/
-
-                    Models.Baseline baseline = new Models.Baseline
-                    {
-                        recordId = kafkaMessage.RecordId,
-                        originType = kafkaMessage.OriginType,
-                        originModifier = kafkaMessage.OriginModifier,
-                        usdModifier = kafkaMessage.UsdModifier,
-                        gdpModifier = kafkaMessage.GbpModifier,
-                        createdTs = kafkaMessage.CreatedTs,
-                        version = kafkaMessage.Version
-                    };
-
-                    _tradeAlgo.ComputeBaselinePPU(baseline);
-                    /*_logger.LogInformation("Hello11 " + baselineData.sgdToUsdBaseline);
-                    _logger.LogInformation("Hello12 " + baselineData.usdToSgdBaseline);
-                    _logger.LogInformation("Hello13 " + baselineData.sgdToGbpBaseline);
-                    _logger.LogInformation("Hello14 " + baselineData.gbpToSgdBaseline);
-                    _logger.LogInformation("Hello15 " + baselineData.usdToGbpBaseline);
-                    _logger.LogInformation("Hello16 " + baselineData.gbpToUsdBaseline);*/
-                }
-                else
-                {
-                    _logger.LogInformation("==========================================================================ERROR, wrong format");
-                    _logger.LogInformation($"message {message.Value}");
-                }
-
-                consumer.Commit(message);
+                var gg = _userInput.AddUserInput(userInput);
             }
-            catch (Exception e)
+            else if (kafkaMessage.RecordId != null)
             {
-                _logger.LogInformation($"messageJSON {message.Value}");
-                _logger.LogInformation($"message {e.Message}");
+                //_logger.LogInformation("==========================================================================TradeBaseline");
+                /*_logger.LogInformation("Hello1 " + baselineData.sgdToUsdBaseline);
+                _logger.LogInformation("Hello2 " + baselineData.usdToSgdBaseline);
+                _logger.LogInformation("Hello3 " + baselineData.sgdToGbpBaseline);
+                _logger.LogInformation("Hello4 " + baselineData.gbpToSgdBaseline);
+                _logger.LogInformation("Hello5 " + baselineData.usdToGbpBaseline);
+                _logger.LogInformation("Hello6 " + baselineData.gbpToUsdBaseline);*/
+
+                Models.Baseline baseline = new Models.Baseline
+                {
+                    recordId = kafkaMessage.RecordId,
+                    originType = kafkaMessage.OriginType,
+                    originModifier = kafkaMessage.OriginModifier,
+                    usdModifier = kafkaMessage.UsdModifier,
+                    gdpModifier = kafkaMessage.GbpModifier,
+                    createdTs = kafkaMessage.CreatedTs,
+                    version = kafkaMessage.Version
+                };
+
+                baselineData = _tradeAlgo.ComputeBaselinePPU(baseline);
+                /*_logger.LogInformation("Hello11 " + baselineData.sgdToUsdBaseline);
+                _logger.LogInformation("Hello12 " + baselineData.usdToSgdBaseline);
+                _logger.LogInformation("Hello13 " + baselineData.sgdToGbpBaseline);
+                _logger.LogInformation("Hello14 " + baselineData.gbpToSgdBaseline);
+                _logger.LogInformation("Hello15 " + baselineData.usdToGbpBaseline);
+                _logger.LogInformation("Hello16 " + baselineData.gbpToUsdBaseline);*/
             }
+            else
+            {
+                _logger.LogInformation("==========================================================================ERROR, wrong format");
+                _logger.LogInformation($"message {message.Value}");
+            }
+
+            consumer.Commit(message);
         }
     }
 }
