@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TradeBank3.BackgroundListener;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace TradeBank3.ServiceLayer
 {
@@ -14,14 +15,18 @@ namespace TradeBank3.ServiceLayer
     {
         private IHttpClientFactory _clientFactory;
         private readonly ILogger<TradeAgorithm> _logger;
+        private IMemoryCache _cache;
+        private const string cacheKey = "BaselineData";
 
-        public TradeAgorithm (ILogger<TradeAgorithm> logger, IHttpClientFactory clientFactory)
+        public TradeAgorithm (ILogger<TradeAgorithm> logger, IHttpClientFactory clientFactory, IMemoryCache cache)
         {
             _clientFactory = clientFactory;
             _logger = logger;
+            _cache = cache;
+            cache.Remove(cacheKey);
         }
 
-        public BaselineData ComputeBaselinePPU(Models.Baseline baseline)
+        public void ComputeBaselinePPU(Models.Baseline baseline)
         {
             double sgdM = (double)baseline.originModifier;
             double usdM = (double)baseline.usdModifier;
@@ -38,14 +43,31 @@ namespace TradeBank3.ServiceLayer
                 hasValues = true
             };
 
-            return data;
+            /*_logger.LogInformation("Hello11 " + data.sgdToUsdBaseline);
+            _logger.LogInformation("Hello12 " + data.usdToSgdBaseline);
+            _logger.LogInformation("Hello13 " + data.sgdToGbpBaseline);
+            _logger.LogInformation("Hello14 " + data.gbpToSgdBaseline);
+            _logger.LogInformation("Hello15 " + data.usdToGbpBaseline);
+            _logger.LogInformation("Hello16 " + data.gbpToUsdBaseline);*/
+            _cache.Set(cacheKey, data);
         }
-        public async Task<String> ShouldAcceptTrade(Models.UserInput userInput, BaselineData data)
+        public async Task<String> ShouldAcceptTrade(Models.UserInput userInput)
         {
             //check first if baselines have value
-            if (!data.hasValues)
-                return "No Trade Baseline";
+            BaselineData data = _cache.Get<BaselineData>(cacheKey);
 
+            if (data == null)
+            {
+                _logger.LogInformation("==========================================================================Baseline doesnt exist yet");
+                return "No Trade Baseline";
+            }
+
+            /*_logger.LogInformation("Hello1 " + data.sgdToUsdBaseline);
+            _logger.LogInformation("Hello2 " + data.usdToSgdBaseline);
+            _logger.LogInformation("Hello3 " + data.sgdToGbpBaseline);
+            _logger.LogInformation("Hello4 " + data.gbpToSgdBaseline);
+            _logger.LogInformation("Hello5 " + data.usdToGbpBaseline);
+            _logger.LogInformation("Hello6 " + data.gbpToUsdBaseline);*/
 
 
             double applicableConversion = -1.0;
@@ -74,7 +96,7 @@ namespace TradeBank3.ServiceLayer
                 applicableConversion = data.usdToGbpBaseline;
             }
 
-            if((double)userInput.PPU >= (applicableConversion *0.8))
+            if(((double)userInput.PPU > applicableConversion) && data.hasValues)
             {
                 try
                 {
@@ -87,13 +109,13 @@ namespace TradeBank3.ServiceLayer
                     {
                         
                         response.EnsureSuccessStatusCode();
-                        _logger.LogInformation("Trade success");
+                        _logger.LogInformation("==========================================================================Trade success");
                         return "Trade Success";
 
                     }
                     else
                     {
-                        _logger.LogInformation("Trade not ours");
+                        _logger.LogInformation("==========================================================================Trade not ours");
                         //throw new HttpRequestException();
                         return "Trade already taken";
                     }
@@ -104,7 +126,8 @@ namespace TradeBank3.ServiceLayer
                     return "Trade API Exception";
                 }
             }
-            return "Insert ";
+            _logger.LogInformation("==========================================================================Trade offer baseline is low");
+            return "Trade offer baseline is low";
         }
     }
 }

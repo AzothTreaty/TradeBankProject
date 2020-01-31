@@ -36,11 +36,11 @@ namespace TradeBank3.BackgroundListener
             {
                 dynamic kafkaMessage = JsonConvert.DeserializeObject(message.Value);
 
-                //_logger.LogInformation($"message {message.Value}");
+                _logger.LogInformation($"message {message.Value}");
 
                 if (kafkaMessage.tradeId != null)
                 {
-                    _logger.LogInformation("TradeOffer");
+                    _logger.LogInformation("==========================================================================TradeOffer");
 
                     Models.UserInput userInput = new Models.UserInput
                     {
@@ -53,7 +53,7 @@ namespace TradeBank3.BackgroundListener
                         timestampCreated = DateTime.Now
                     };
 
-                    String status = await _tradeAlgo.ShouldAcceptTrade(userInput, baselineData);
+                    String status = await _tradeAlgo.ShouldAcceptTrade(userInput);
 
                     userInput.status = status;
 
@@ -61,7 +61,7 @@ namespace TradeBank3.BackgroundListener
                 }
                 else if (kafkaMessage.RecordId != null)
                 {
-                    _logger.LogInformation("TradeBaseline");
+                    _logger.LogInformation("==========================================================================TradeBaseline");
                     /*_logger.LogInformation("Hello1 " + baselineData.sgdToUsdBaseline);
                     _logger.LogInformation("Hello2 " + baselineData.usdToSgdBaseline);
                     _logger.LogInformation("Hello3 " + baselineData.sgdToGbpBaseline);
@@ -80,7 +80,7 @@ namespace TradeBank3.BackgroundListener
                         version = kafkaMessage.Version
                     };
 
-                    baselineData = _tradeAlgo.ComputeBaselinePPU(baseline);
+                    _tradeAlgo.ComputeBaselinePPU(baseline);
                     /*_logger.LogInformation("Hello11 " + baselineData.sgdToUsdBaseline);
                     _logger.LogInformation("Hello12 " + baselineData.usdToSgdBaseline);
                     _logger.LogInformation("Hello13 " + baselineData.sgdToGbpBaseline);
@@ -90,7 +90,7 @@ namespace TradeBank3.BackgroundListener
                 }
                 else
                 {
-                    _logger.LogInformation("ERROR, wrong format");
+                    _logger.LogInformation("==========================================================================ERROR, wrong format");
                     _logger.LogInformation($"message {message.Value}");
                 }
 
