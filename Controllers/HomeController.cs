@@ -35,8 +35,8 @@ namespace TradeBank3.Controllers
             {
                 Models.Registration registrationDetails = new Models.Registration
                 { 
-                    appName = "asdasd",
-                    UniqueCode = "asdasd"
+                    appName = "TradeBank3GioVersion",
+                    UniqueCode = "pspspspspppsp"
 
                 };
                 var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/bank/register");

@@ -33,7 +33,7 @@ namespace TradeBank3
         {
 
             services.AddHttpClient("TradeBankProject", client => {
-                client.BaseAddress = new Uri("https://fx-cts.azurewebsites.net");
+                client.BaseAddress = new Uri("https://fx-cts-app.azurewebsites.net");
             });
 
             services.AddControllersWithViews();

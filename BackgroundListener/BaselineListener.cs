@@ -36,11 +36,11 @@ namespace TradeBank3.BackgroundListener
             {
                 dynamic kafkaMessage = JsonConvert.DeserializeObject(message.Value);
 
-                _logger.LogInformation($"message {message.Value}");
+                //_logger.LogInformation($"message {message.Value}");
 
                 if (kafkaMessage.tradeId != null)
                 {
-                    _logger.LogInformation("==========================================================================TradeOffer");
+                    //_logger.LogInformation("==========================================================================TradeOffer");
 
                     Models.UserInput userInput = new Models.UserInput
                     {
@@ -61,7 +61,7 @@ namespace TradeBank3.BackgroundListener
                 }
                 else if (kafkaMessage.RecordId != null)
                 {
-                    _logger.LogInformation("==========================================================================TradeBaseline");
+                    //_logger.LogInformation("==========================================================================TradeBaseline");
                     /*_logger.LogInformation("Hello1 " + baselineData.sgdToUsdBaseline);
                     _logger.LogInformation("Hello2 " + baselineData.usdToSgdBaseline);
                     _logger.LogInformation("Hello3 " + baselineData.sgdToGbpBaseline);

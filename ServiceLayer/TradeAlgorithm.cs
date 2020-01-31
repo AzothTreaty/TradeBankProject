@@ -26,6 +26,11 @@ namespace TradeBank3.ServiceLayer
             cache.Remove(cacheKey);
         }
 
+        /*public Models.Baseline getBaseline()
+        {
+
+        }*/
+
         public void ComputeBaselinePPU(Models.Baseline baseline)
         {
             double sgdM = (double)baseline.originModifier;
@@ -58,7 +63,7 @@ namespace TradeBank3.ServiceLayer
 
             if (data == null)
             {
-                _logger.LogInformation("==========================================================================Baseline doesnt exist yet");
+               //_logger.LogInformation("==========================================================================Baseline doesnt exist yet");
                 return "No Trade Baseline";
             }
 
@@ -71,32 +76,37 @@ namespace TradeBank3.ServiceLayer
 
 
             double applicableConversion = -1.0;
-            if(userInput.sourceCurrency == "SGD" && userInput.purchaseCurrency == "USD")
+            if(userInput.sourceCurrency == "SGD")
             {
-                applicableConversion = data.sgdToUsdBaseline;
+                if(userInput.purchaseCurrency == "USD")
+                    applicableConversion = data.sgdToUsdBaseline;
+                else if(userInput.purchaseCurrency == "GBP")
+                    applicableConversion = data.sgdToGbpBaseline;
+                else
+                    _logger.LogInformation("==========================================================================Error Invalid Conversion");
             }
-            else if (userInput.sourceCurrency == "USD" && userInput.purchaseCurrency == "SGD")
+            else if (userInput.sourceCurrency == "USD")
             {
-                applicableConversion = data.usdToSgdBaseline;
+                if (userInput.purchaseCurrency == "SGD")
+                    applicableConversion = data.usdToSgdBaseline;
+                else if (userInput.purchaseCurrency == "GBP")
+                    applicableConversion = data.usdToGbpBaseline;
+                else
+                    _logger.LogInformation("==========================================================================Error Invalid Conversion");
             }
-            else if (userInput.sourceCurrency == "SGD" && userInput.purchaseCurrency == "GBP")
+            else if (userInput.sourceCurrency == "GBP")
             {
-                applicableConversion = data.sgdToGbpBaseline;
+                if (userInput.purchaseCurrency == "SGD")
+                    applicableConversion = data.gbpToSgdBaseline;
+                else if (userInput.purchaseCurrency == "USD")
+                    applicableConversion = data.gbpToUsdBaseline;
+                else
+                    _logger.LogInformation("==========================================================================Error Invalid Conversion");
             }
-            else if (userInput.sourceCurrency == "GBP" && userInput.purchaseCurrency == "SGD")
-            {
-                applicableConversion = data.gbpToSgdBaseline;
-            }
-            else if (userInput.sourceCurrency == "GBP" && userInput.purchaseCurrency == "USD")
-            {
-                applicableConversion = data.gbpToUsdBaseline;
-            }
-            else if (userInput.sourceCurrency == "USD" && userInput.purchaseCurrency == "GBP")
-            {
-                applicableConversion = data.usdToGbpBaseline;
-            }
+            else
+                _logger.LogInformation("==========================================================================Error Invalid Conversion");
 
-            if(((double)userInput.PPU > applicableConversion) && data.hasValues)
+            if (((double)userInput.PPU > applicableConversion) && data.hasValues)
             {
                 try
                 {
@@ -109,24 +119,24 @@ namespace TradeBank3.ServiceLayer
                     {
                         
                         response.EnsureSuccessStatusCode();
-                        _logger.LogInformation("==========================================================================Trade success");
+                        //_logger.LogInformation("==========================================================================Trade success");
                         return "Trade Success";
 
                     }
                     else
                     {
-                        _logger.LogInformation("==========================================================================Trade not ours");
+                        //_logger.LogInformation("==========================================================================Trade not ours");
                         //throw new HttpRequestException();
                         return "Trade already taken";
                     }
                 }
                 catch (Exception e)
                 {
-                    _logger.LogInformation($"message {e.Message}");
+                    //_logger.LogInformation($"message {e.Message}");
                     return "Trade API Exception";
                 }
             }
-            _logger.LogInformation("==========================================================================Trade offer baseline is low");
+            //_logger.LogInformation("==========================================================================Trade offer baseline is low");
             return "Trade offer baseline is low";
         }
     }
